@@ -22,7 +22,7 @@ def search_twitter(query, tweet_fields, bearer_token = BEARER_TOKEN):
     #search terms
 query = "XXL"
 #twitter fields to be returned by api call
-tweet_fields = "tweet.fields=text"
+tweet_fields = "tweet.fields=text,author_id,created_at"
 
 #twitter api call
 json_response = search_twitter(query=query, tweet_fields=tweet_fields, bearer_token=BEARER_TOKEN)
