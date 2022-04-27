@@ -1,0 +1,321 @@
+import mysql.connector
+from datetime import datetime
+
+cnx = mysql.connector.connect(user='root',database='Users')
+
+cursor = cnx.cursor()
+
+
+query_tweets = ("SELECT tweet_source FROM tweets_source")
+query_negative_words = ("SELECT * FROM negative_words")
+query_positive_words = ("SELECT * FROM positive_words")
+query_sentiment_analysis = ("SELECT * FROM sentiment_analysis_by_month")
+
+
+list_postitve = []
+list_negative = []
+list_tweets = []   
+
+cursor.execute(query_positive_words)
+for row in cursor:
+    for field in row:
+        list_postitve.append(field)
+print("")
+print("")
+print(list_postitve[0])
+print(list_postitve[1])
+print(list_postitve[2])
+print(list_postitve[3])
+print(list_postitve[4])
+print(list_postitve[5])
+
+
+cursor.execute(query_negative_words)
+for row in cursor:
+    for negative in row:
+        list_negative.append(negative)
+print("")
+print(list_negative[0])
+print(list_negative[1])
+print(list_negative[2])
+print(list_negative[3])
+print(list_negative[4])
+print("")
+
+
+cursor.execute(query_tweets)
+for row in cursor:
+    for tweet in row:
+        list_tweets.append(tweet)
+print("")
+print(list_tweets[0])
+print(list_tweets[1])
+print(list_tweets[2])
+print(list_tweets[3])
+print(list_tweets[4])
+print(list_tweets[5])
+print(list_tweets[6])
+print(list_tweets[7])
+print(list_tweets[8])
+print(list_tweets[9])
+print(list_tweets[10])
+print(list_tweets[11])
+print(list_tweets[12])
+
+
+
+
+# Her åpner jeg en fil-liste som programmet prøver å søke etter ord på en master liste med setninger.
+list_file = list_postitve
+
+search_words = []
+
+# Her er en loop som søker etter ord en setning om gangen.
+for word in list_file:
+
+    # her lagrer programmen ord in en array og strip whitespace
+    search_words.append(word)
+
+
+#---------------------------------------------------------------------------------------------
+# her er den listen som skal ha linjer med setninger som har samsvarende  ord.
+matches = []
+
+# koden åpner hovedfilen
+master_file = list_tweets
+
+ 
+# Her er en loop som søker etter ord en setning om gangen.
+for line in master_file:
+
+# Dele den gjeldende linjen i array, gjør dette at vi kan bruke "in"-operatoren for å søke etter eksakte strenge
+    current_line = line
+
+    # looper gjennom hver ord
+    for search_word in search_words:
+
+        # sjekker om ordene er i den setningen som programmen leser.
+        if search_word in current_line:
+
+            # hvis funnet, lagre setning slik vi fant den i filen
+            matches.append(line)
+
+            # Når den er funnet, slutter du å søke på gjeldende linje
+print("")
+print("Dette er tweets som matcher de positive ordene")
+print("")
+print(matches[0])
+print(matches[1])
+print(matches[2])
+print(matches[3])
+print(matches[4])
+print(matches[5])
+print(matches[6])
+print(matches[7])
+print(matches[8])
+print(matches[9])
+
+
+ 
+#for i in matches:
+#    mysql_insert_query = """INSERT INTO positive_tweets (positive_tweet) VALUES (%s)"""
+#    cursor.execute(mysql_insert_query, i)
+#cnx.commit()
+
+
+#cursor.executemany('''INSERT INTO positive_tweets(tweet_positive) VALUES (%s)''', matches) 
+
+#---------------------------------------------------------------------------------------------
+
+
+
+# Her åpner jeg en fil-liste som programmet prøver å søke etter ord på en master liste med setninger.
+list_file1 = list_negative
+
+search_words = []
+
+# Her er en loop som søker etter ord en setning om gangen.
+for word in list_file1:
+
+    # her lagrer programmen ord in en array og strip whitespace
+    search_words.append(word)
+
+# Det er her de samsvarende linjene vil bli lagret
+matches2 = []
+
+# koden åpner hovedfilen
+master_file = list_tweets
+
+# loope gjennom hver linje i hovedfilen
+for line in master_file:
+
+    # Dele den gjeldende linjen i array, dette gjør at vi kan bruke "in"-operatoren for å søke etter eksakte strenger
+    current_line = line
+
+    # gå gjennom hvert søkeord
+    for search_word in search_words:
+
+        # sjekker om søkeordet er i gjeldende linje
+        if search_word in current_line:
+
+            # hvis funnet, lagre setningen i linjen slik vi fant den i filen
+            matches2.append(line)
+
+    
+#---------------------------------------------------------------------------------------------
+
+# lager en ny fil
+new_file = matches2
+
+# loope gjennom alle de samsvarende linjene
+
+
+    # skriv gjeldende samsvarende linje til den nye filen
+
+
+print("")
+print("Dette er tweets som matcher de negative ordene")
+print("")
+print(matches2[0])
+print(matches2[1])
+print(matches2[2])
+print(matches2[3])
+print(matches2[4])
+
+val = [(matches2[0]),
+       (matches2[1]),
+       (matches2[2]),
+       (matches2[3]),
+       (matches2[4])
+
+       ]
+
+
+
+#cursor.executemany('''INSERT INTO negative_tweets(tweet_negative) VALUES (%s)''', matches) 
+insert_statement = "INSERT INTO negative_tweets (tweets_negative) VALUES (%s)"
+
+
+cursor.execute(insert_statement,val)
+cnx.commit()
+
+print("")
+print("")
+
+
+#---------------------------------------------------------------------------------------------
+
+telling_bra = 0
+telling_dårlig = 0
+telling_master = 0
+telling_neutral = 0
+#---------------------------------------------------------------------------------------------------------------------------------------------
+
+list_file_new1 = matches
+
+
+
+# Koden går gjennom ordene i søkelisten til hyggelige ord
+for word in list_file_new1:
+    telling_bra = telling_bra +1
+
+print("RESULTATET BLE!")
+print("")
+
+print("Det er",telling_bra,"hygelige kommentarer")
+
+
+#---------------------------------------------------------------------------------------------------------------------
+
+list_file_new2 = matches2
+
+
+
+# Koden går gjennom ordene i søkelisten til dårlige/uhyggelige ord.
+for word in list_file_new2:
+    telling_dårlig = telling_dårlig +1
+
+
+
+print("Det er ",telling_dårlig,"dårlige kommentarer")
+
+#---------------------------------------------------------------------------------------------------------------------
+
+list_file_new = list_tweets
+
+# Koden går gjennom ordene i hovedsøkelisten og teller antall setninger
+a = (telling_dårlig)
+b = (telling_bra)
+telling_master = a+b
+
+
+print("Vi fant",telling_master, "ord som er hyggelige eller uhyggelige disse 13 kommentarene ")
+print("")
+
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------------
+
+#Denne koden brukes til å finne ut hvor mange prosent av setningene i hovenlisten som er enten Positive, negative eller nøyrtale og printer ut svaret når jeg kjører koden.
+bra_prosent = 0
+neutral_prosent = 0
+dårlig_prosent = 0
+result = ""
+##month_date = to_date()
+telling_neutral = telling_master - telling_dårlig - telling_bra
+
+dårlig_prosent = telling_dårlig/telling_master*100
+
+bra_prosent = telling_bra/telling_master*100
+
+neutral_prosent = telling_neutral/telling_master*100
+
+print("Det er",dårlig_prosent,"%, dårlige kommentarer")
+print("Det er",bra_prosent,"%, hyggelige kommentarer")
+print("Det er",neutral_prosent,"%, nøytrale kommentarer")
+print("")
+
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------------
+#Her så har jeg IF lopps der det står hvis der er mest positive kommenterer printer koden ut "Resultatet er at det er mest bra kommentarer" og det samme med negative eller nøytarle.
+
+if bra_prosent > 33.3:
+    if dårlig_prosent < 33.3:
+        if neutral_prosent < 33.3:
+            print ("")
+            print ("Resultatet er at det er mest bra kommentarer")
+            print ("")
+            result = ("1")
+
+
+
+if dårlig_prosent > 33.3:
+    if bra_prosent < 33.3:
+        if neutral_prosent < 33.3:
+            print ("")
+            print ("Resultatet er at det er mest dårlige kommentarer")
+            print ("")
+            result = ("-1")
+
+
+if neutral_prosent > 33.3:
+    if dårlig_prosent < 33.3:
+        if bra_prosent < 33.3:
+            print ("")
+            print ("Resultatet er at det er mest nøytrale kommentarer")
+            print ("")
+            result = ("0")
+
+str = '01-01-22'
+date_object = datetime.strptime(str, '%d-%m-%y')
+print(date_object)
+
+# execute the query with their record value
+query_ferdig_tabell = "INSERT INTO sentiment_analysis_by_month (sentiment) VALUES (%s)"
+
+cursor.execute(query_ferdig_tabell,(result,))
+
+cnx.commit()
+
+
